@@ -1,0 +1,12 @@
+# Derleme çıktıları
+bin/
+obj/
+*.user
+
+# Visual Studio
+.vs/
+*.suo
+
+# BepInEx / oyun artıkları (depo temiz kalsın)
+*.log
+BepInEx/

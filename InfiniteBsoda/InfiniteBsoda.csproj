@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>InfiniteBsoda</AssemblyName>
+    <RootNamespace>BaldiInfiniteBsoda</RootNamespace>
+    <LangVersion>latest</LangVersion>
+
+    <!--
+      Oyun klasorunuzu buraya yazin veya derlerken verin:
+        dotnet build -p:BaldiDir="D:\Games\BaldiBasics"
+      build.ps1 de ayni parametreyi gecer.
+    -->
+    <BaldiDir Condition="'$(BaldiDir)' == ''">C:\Users\Windows\Downloads\tamam_ulan_asker_collection_14e4c_-VyvA5S (1)\Tamam Ulan Asker Collection\TAMAM ULAN ASKER</BaldiDir>
+
+    <!--
+      *_Data klasoru otomatik bulunur (TAMAM ULAN ASKER_Data, BALDI_Data, ...).
+      Birden fazla *_Data varsa veya elle vermek isterseniz: -p:DataDir="..."
+    -->
+    <DataDir Condition="'$(DataDir)' == ''">$([System.IO.Directory]::GetDirectories('$(BaldiDir)', '*_Data')[0])</DataDir>
+
+    <ManagedDir>$(DataDir)\Managed</ManagedDir>
+    <BepInExCore>$(BaldiDir)\BepInEx\core</BepInExCore>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <Reference Include="Assembly-CSharp"><HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine"><HintPath>$(ManagedDir)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.InputLegacyModule"><HintPath>$(ManagedDir)\UnityEngine.InputLegacyModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.UI"><HintPath>$(ManagedDir)\UnityEngine.UI.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="BepInEx"><HintPath>$(BepInExCore)\BepInEx.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(BepInExCore)\0Harmony.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>
