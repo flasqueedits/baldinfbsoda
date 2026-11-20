@@ -10,3 +10,4 @@ obj/
 # BepInEx / oyun artıkları (depo temiz kalsın)
 *.log
 BepInEx/
+release/

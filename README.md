@@ -1,24 +1,76 @@
-# Baldi Infinite BSODA (BepInEx Mod)
+# Baldi Infinite BSODA — Cheat Pack (BepInEx Mod)
 
-Baldi's Basics Classic kod tabanına sahip oyunlar için **sonsuz BSODA** modu
-(BepInEx 5 + Harmony). Envanterdeki slotlar kalıcı olarak **ID 4 = BSODA**'ya
-kilitlenir; BSODA'yı kullandığınızda slot anında yeniden dolar.
+Baldi's Basics Classic kod tabanına sahip oyunlar için **22 hilelik paket**
+(BepInEx 5 + HarmonyX) + oyun içi konsol overlay + AssetStudio tarzı varlık
+ripper'ı. **Sürüm-bağımsız**: oyun sınıfları ve alanları runtime'da reflection
+ile bulunur; Assembly-CSharp'a compile-time bağımlılık yoktur.
 
 - **Plugin GUID:** `com.mod.baldi.infinitebsoda`
-- **Framework:** BepInEx 5 (Unity Mono, net472) + HarmonyX
+- **Framework:** BepInEx 5 (Unity Mono, net472) + HarmonyX + TextMeshPro
 - **Test edildiği oyun:** "TAMAM ULAN ASKER" (Baldi's Basics Classic kod tabanı, Unity 2019.4)
 
-## Mod ne yapıyor?
+## Hileler ve tuşlar
 
-`GameControllerScript`'i sahnede bulur ve her karede envanteri denetler:
+| Tuş | Hile | Açıklama |
+|---|---|---|
+| **F6** | Sonsuz BSODA | Envanter slotları kalıcı ID 4 (BSODA); kullanınca anında yeniden dolar |
+| **F7** | Sonsuz Stamina | Stamina hiç bitmez — koşu sonsuz (HUD barı da tam dolu kalır) |
+| **F8** | Finale Mode | Tüm notebooklar toplanmış gibi yapar, oyun finale mode'a geçer |
+| **F9** | **Godmode** | NPC'ler dokunamaz. Varsayılan **süresiz** (`∞`); istersen config'den süreli |
+| **F5** | Hız Hilesi | Yürüme/koşu hızı çarpanı (varsayılan 3x, GUI'den 1-10 ayarlanır) |
+| **F11** | Yavaş Çekim | `Time.timeScale` ile yavaş oyun (varsayılan 0.35x) |
+| **F12** | Tüm Eşyalar | Envanterin tüm slotlarını seçilen eşya ID'siyle doldurur |
+| **T** | NPC Dondurma | Baldi, Playtime, Principal, Bully vb. ajanlarını durdurur |
+| **J** | Jumpscare Yok | Baldi'nin flaş/kamera animasyonlarını ve game-over'u engeller |
+| **N** | Duvar Geçme (Noclip) | CharacterController'ı kapatır, duvarlardan geçersin |
+| **G** | Işınlanma | İleri yönde 12 m ışınlanır (tekrar tekrar basılabilir) |
+| **H** | Duvar Hilesi (ESP) | NPC'leri duvarların arkasından görünür yapar (ZTest Always) |
+| **C** | Sakin Baldi | Baldi'nin öfkesini sıfırlar, asla kızmaz/kovalamaz |
 
-```csharp
-gameController.item[i] = 4;                                   // slotu BSODA yap
-gameController.itemSlot[i].texture = gameController.useableItems[4]; // HUD ikonunu tazele
-```
+### Ek hileler (2.4.0)
 
-- `useableItems` / `itemTextures` alan adı oyun sürümüne göre otomatik bulunur.
-- **F6** ile mod aç/kapat.
+| Tuş | Hile | Açıklama |
+|---|---|---|
+| **V** | Yüksek Atlama | Düşük yer çekimi (`Physics.gravity`), 1-8x ayarlanabilir |
+| **B** | Uçma Modu | Space ile yukarı, Ctrl ile aşağı uçar |
+| **X** | Düşmanları Gizle | Tüm NPC GameObject'lerini kapatır (tekrar basınca geri gelir) |
+| **M** | Notebook Otomatik Topla | Tüm notebook pickuplarını anında toplar |
+| **R** | Sıfırla | Suçluluk, game-over süresi ve Baldi öfkesini sıfırlar |
+| **P** | Kapılar/Çıkışlar | Tüm kapıların kilidini açar, çıkışları kaldırır |
+| **K** | Çıkışa Işınlan | `entrance_0..3` konumuna ışınlanır |
+| **F4** | Debug Modu | Oyunun `debugMode` alanını açar |
+| **Y** | Sonsuz Mod | Baldi'nin `endless` alanını açar |
+
+**Diğer kontroller:** `Delete` menü, `F10` konsol overlay, menüdeki **Ayarlar**
+slider'ları ile hız/yavaşlık/eşya ID/FOV/ses perdesi/notebook/atlama/uçma hızı
+anında değiştirilir. **Açılış splash'i kaldırıldı** — oyun doğrudan menüye açılır.
+
+### Godmode detayı
+- Süre varsayılan **0 = süresiz** (HUD'da `GODMODE ∞`).
+- Süreli istersen `4_Godmode/DurationSeconds` değerini saniye olarak ayarla;
+  üst-ortada oyunun kendi COMIC PRO fontuyla geri sayım görünür.
+- Oyundan çıkınca (GameController yok olunca) otomatik kapanır.
+
+### Varlık Ripper'ı (AssetStudio tarzı)
+`Delete` → **Varlıklar** sekmesi → `Dosya > Oyun Data'sını Tara` → **Sınıflar**
+sekmesinde tipleri seç → **EXPORT**. Çıktı masaüstünde `BaldiRip_*` klasöründe
+kategori alt klasörleriyle (Audio/Texture/Text/Animation/Model/Script/Other)
+yazılır: Texture2D → PNG, AudioClip → OGG, TextAsset → TXT, diğerleri → RAW/BIN.
+Tüm olaylar BepInEx log'una **ve** oyun içi konsola yazılır.
+
+## Sürüm-bağımsızlık (neden her Unity sürümünde çalışır)
+
+Mod, `Assembly-CSharp`'a **compile-time bağlı değildir**. Oyun sınıfları ve
+alanları runtime'da reflection ile, muhtemel adların listesi taranarak bulunur:
+
+- Sınıf: `GameControllerScript` / `GameController` / `GameManager...`
+- Oyuncu: `PlayerScript` / `PlayerMovement` / `PlayerFunctions`
+- Stamina: `stamina` + `maxStamina` **veya** `staminaMax` (sürüme göre)
+- Envanter: `item` / `items`, slot: `itemSlot`, ikon: `itemTextures` **veya** `useableItems`
+- Notebooks: `notebooks` / `notebookCount`
+- Godmode yamaları: `OnTriggerEnter`/`Stay`/`Exit` (private olsa bile AccessTools ile)
+
+Böylece BB Classic'in 1.4.x farklı derlemelerinde alan adları değişse bile mod uyum sağlar.
 
 ## Gereksinimler
 
@@ -41,13 +93,11 @@ cd baldinfbsoda
 `build.ps1` projeyi derler ve `InfiniteBsoda.dll`'yi otomatik olarak
 `<Oyun>\BepInEx\plugins\` klasörüne kopyalar.
 
-Visual Studio ile: `InfiniteBsoda.sln` açıp **Release → Build** (oyun yolu
-`InfiniteBsoda\InfiniteBsoda.csproj` içindeki `BaldiDir` alanından okunur).
+Visual Studio ile: `InfiniteBsoda.sln` açıp **Release → Build**.
 
 ### Oyun yolu / *_Data tespiti
 
-`*_Data` klasörü (`TAMAM ULAN ASKER_Data`, `BALDI_Data`, ...) **otomatik** bulunur.
-Sadece oyunun kök klasörünü bilmeniz yeterlidir:
+`*_Data` klasörü **otomatik** bulunur. Sadece oyunun kök klasörünü verin:
 
 ```powershell
 dotnet build InfiniteBsoda\InfiniteBsoda.csproj -p:BaldiDir="D:\Games\BenimBaldi"
@@ -57,26 +107,44 @@ dotnet build InfiniteBsoda\InfiniteBsoda.csproj -p:BaldiDir="D:\Games\BenimBaldi
 
 `<Oyun>\BepInEx\config\com.mod.baldi.infinitebsoda.cfg`
 
-| Ayar | Varsayılan | Açıklama |
-|---|---|---|
-| `Enabled` | `true` | Modu aç/kapat |
-| `ToggleKey` | `F6` | Oyun içi aç/kapama tuşu |
+| Bölüm | Anahtar | Varsayılan | Açıklama |
+|---|---|---|---|
+| `1_BSDOA` | `Enabled` | `true` | Sonsuz BSODA aç/kapat |
+| `1_BSDOA` | `ForceAllSlots` | `true` | `true`: 3 slotun tamamı BSODA. `false`: sadece boş slotlar |
+| `2_Stamina` | `StartEnabled` | `false` | Oyun başında sonsuz stamina açık mı |
+| `4_Godmode` | `DurationSeconds` | `0` | Godmode süresi (saniye), **0 = süresiz** |
+| `6_Extra` | `SpeedMultiplier` / `SlowMoScale` / `ItemId` / `FieldOfView` / `AudioPitch` / `Notebooks` / `JumpMultiplier` / `FlySpeed` | `3` / `0.35` / `4` / `90` / `1` / `20` / `3` / `12` | Ek hile değerleri |
+| `General` | `Language` | `en` | GUI dili (`en` / `tr`) |
+| `Keys` | `Bsoda` / `Stamina` / `Finale` / `Godmode` | `F6`/`F7`/`F8`/`F9` | Ana hile tuşları |
+| `Keys` | `Speed` / `SlowMotion` / `AllItems` / `NpcFreeze` / `NoJumpscare` / `Noclip` / `Teleport` / `Wallhack` / `CalmBaldi` | `F5`/`F11`/`F12`/`T`/`J`/`N`/`G`/`H`/`C` | Ek hile tuşları |
+| `Keys` | `HighJump` / `Fly` / `HideEnemies` / `AutoNotebooks` / `ResetGuilt` / `UnlockDoors` / `ExitTeleport` / `DebugMode` / `EndlessMode` | `V`/`B`/`X`/`M`/`R`/`P`/`K`/`F4`/`Y` | Yeni hile tuşları |
+| `5_Dev` | `AutoExportOnStart` | `false` | DEV: sadece `Warning` sahnesinde açılışta otomatik scan+export |
 
 ## Dosyalar
 
 ```
 baldinfbsoda\
-├─ InfiniteBsoda.sln              Visual Studio çözümü
-├─ build.ps1                      Derle + BepInEx\plugins'e kopyala
+├─ InfiniteBsoda.sln
+├─ build.ps1
 ├─ README.md
 └─ InfiniteBsoda\
    ├─ InfiniteBsoda.csproj        Proje (BaldiDir verilir, *_Data otomatik)
-   └─ InfiniteBsodaPlugin.cs      Mod kodu
+   ├─ InfiniteBsodaPlugin.cs      Ana plugin (config, tuşlar, splash, log)
+   ├─ GameAccess.cs               Sürüm-bağımsız reflection erişim katmanı
+   ├─ ExtraCheats.cs              9 ek hile (hız, slow-mo, eşya, NPC, noclip, ESP...)
+   ├─ InfiniteStamina.cs          Sonsuz stamina
+   ├─ FinaleModeCheat.cs          Spoop + Finale mode
+   ├─ Godmode.cs                  Süresiz godmode + COMIC PRO HUD
+   ├─ CheatMenu.cs                GUI (Cheats/Assets/Classes + ayar slider'ları)
+   ├─ ModConsole.cs               Oyun içi konsol overlay
+   ├─ Lang.cs                     EN/TR localization
+   └─ Ripper\                     AssetStudio tarzı varlık ripper'ı
 ```
 
 ## Notlar
 
-- Derleme oyunun `*_Data\Managed\Assembly-CSharp.dll` + `BepInEx\core` DLL'lerine
-  referans verir; oyun kodu değişirse alan adlarını kontrol edin.
+- Derleme oyunun `*_Data\Managed` DLL'lerine referans verir
+  (UnityEngine, TextMeshPro vb.); oyun kodu değişse bile derlenir çünkü
+  Assembly-CSharp'a compile-time bağlı değil.
 - Classic Remastered / Plus farklı sınıf yapısı kullanır, bu mod doğrudan
-  `GameControllerScript` hedefler.
+  classic `GameControllerScript`/`PlayerScript` hedefler.

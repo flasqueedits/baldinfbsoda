@@ -8,14 +8,10 @@
     <!--
       Oyun klasorunuzu buraya yazin veya derlerken verin:
         dotnet build -p:BaldiDir="D:\Games\BaldiBasics"
-      build.ps1 de ayni parametreyi gecer.
     -->
     <BaldiDir Condition="'$(BaldiDir)' == ''">C:\Users\Windows\Downloads\tamam_ulan_asker_collection_14e4c_-VyvA5S (1)\Tamam Ulan Asker Collection\TAMAM ULAN ASKER</BaldiDir>
 
-    <!--
-      *_Data klasoru otomatik bulunur (TAMAM ULAN ASKER_Data, BALDI_Data, ...).
-      Birden fazla *_Data varsa veya elle vermek isterseniz: -p:DataDir="..."
-    -->
+    <!-- *_Data klasoru otomatik bulunur. Elle vermek isterseniz: -p:DataDir="..." -->
     <DataDir Condition="'$(DataDir)' == ''">$([System.IO.Directory]::GetDirectories('$(BaldiDir)', '*_Data')[0])</DataDir>
 
     <ManagedDir>$(DataDir)\Managed</ManagedDir>
@@ -24,12 +20,31 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
-    <Reference Include="Assembly-CSharp"><HintPath>$(ManagedDir)\Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
+
+    <!-- BepInEx / Harmony -->
+    <Reference Include="BepInEx"><HintPath>$(BepInExCore)\BepInEx.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(BepInExCore)\0Harmony.dll</HintPath><Private>false</Private></Reference>
+
+    <!-- Unity cekirdek / UI / Input -->
     <Reference Include="UnityEngine"><HintPath>$(ManagedDir)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(ManagedDir)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.InputLegacyModule"><HintPath>$(ManagedDir)\UnityEngine.InputLegacyModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.UI"><HintPath>$(ManagedDir)\UnityEngine.UI.dll</HintPath><Private>false</Private></Reference>
-    <Reference Include="BepInEx"><HintPath>$(BepInExCore)\BepInEx.dll</HintPath><Private>false</Private></Reference>
-    <Reference Include="0Harmony"><HintPath>$(BepInExCore)\0Harmony.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.UIModule"><HintPath>$(ManagedDir)\UnityEngine.UIModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.IMGUIModule"><HintPath>$(ManagedDir)\UnityEngine.IMGUIModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.TextRenderingModule"><HintPath>$(ManagedDir)\UnityEngine.TextRenderingModule.dll</HintPath><Private>false</Private></Reference>
+    <!-- Ek hileler: AI (NavMeshAgent), Physics (CharacterController), Audio (AudioSource) -->
+    <Reference Include="UnityEngine.AIModule"><HintPath>$(ManagedDir)\UnityEngine.AIModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.PhysicsModule"><HintPath>$(ManagedDir)\UnityEngine.PhysicsModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.AudioModule"><HintPath>$(ManagedDir)\UnityEngine.AudioModule.dll</HintPath><Private>false</Private></Reference>
+
+    <!-- TextMeshPro (geri sayim HUD'u icin; COMIC PRO fontunu oyunun kendi text'inden aliriz) -->
+    <Reference Include="Unity.TextMeshPro"><HintPath>$(ManagedDir)\Unity.TextMeshPro.dll</HintPath><Private>false</Private></Reference>
+
+    <!--
+      NOT: Assembly-CSharp'a compile-time bagimlilik YOK.
+      Oyun siniflari (GameControllerScript, PlayerScript, ...) runtime'da reflection ile
+      bulunur; boylece hangi Unity/surum klasik kod yapisinda olursa olsun calisir.
+    -->
   </ItemGroup>
 </Project>
