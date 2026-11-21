@@ -393,7 +393,7 @@ namespace BaldiInfiniteBsoda
 				"Hile durumları (kısayol tuşları da çalışır)"), _wrapStyle);
 
 			GUILayout.Space(4);
-			CheatRow(L.C("Infinite BSODA", "Sonsuz BSODA"), "F6", plugin.BsodaEnabled, plugin.ToggleBsoda);
+			CheatRow(L.C("Infinite Items (keep picked up)", "Sonsuz Eşya (alınan kalıcı)"), "F6", plugin.BsodaEnabled, plugin.ToggleBsoda);
 			CheatRow(L.C("Infinite Stamina", "Sonsuz Stamina"), "F7", plugin.StaminaEnabled, plugin.ToggleStamina);
 			CheatRow("Finale Mode", "F8", FinaleModeCheat.IsActive, plugin.ToggleFinale,
 				FinaleModeCheat.IsSpooped ? L.C("spooped", "spooped") : null);

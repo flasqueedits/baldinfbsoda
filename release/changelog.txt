@@ -1,5 +1,15 @@
-ULTIMATE BALDI CHEAT! v2.4.0
+ULTIMATE BALDI CHEAT! v2.5.0
 =============================
+
+YENI (2.5.0):
+- "Sonsuz BSODA" -> "SONSUZ ESYA" olarak degistirildi.
+  Aldigin HER ESYA (hangi ID ve slot olursa olsun) envanterinde kalici durur;
+  oyun esyayi kullandiginda/cikardiginda ayni slotta geri gelir.
+  BOS SLOTLARA HIYBIR SEY EKLENMEZ (artik tum envanter BSODA ile dolmaz).
+- HUD ikonlari artik her slot icin GERCEK esya ID'sini gosterir.
+- ForceAllSlots config'i kaldirildi.
+
+ONCEKI (2.4.0):
 
 22 hile + AssetStudio tarzi varlik ripper + oyun ici konsol + EN/TR dil.
 

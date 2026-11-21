@@ -13,7 +13,7 @@ ile bulunur; Assembly-CSharp'a compile-time bağımlılık yoktur.
 
 | Tuş | Hile | Açıklama |
 |---|---|---|
-| **F6** | Sonsuz BSODA | Envanter slotları kalıcı ID 4 (BSODA); kullanınca anında yeniden dolar |
+| **F6** | **Sonsuz Eşya** | Aldığın her eşya **kendi slotunda kalıcı** olur (hangi ID/slot olursa olsun); kullanınca geri gelir. **Boş slotlara hiçbir şey eklenmez** |
 | **F7** | Sonsuz Stamina | Stamina hiç bitmez — koşu sonsuz (HUD barı da tam dolu kalır) |
 | **F8** | Finale Mode | Tüm notebooklar toplanmış gibi yapar, oyun finale mode'a geçer |
 | **F9** | **Godmode** | NPC'ler dokunamaz. Varsayılan **süresiz** (`∞`); istersen config'den süreli |
@@ -109,8 +109,7 @@ dotnet build InfiniteBsoda\InfiniteBsoda.csproj -p:BaldiDir="D:\Games\BenimBaldi
 
 | Bölüm | Anahtar | Varsayılan | Açıklama |
 |---|---|---|---|
-| `1_BSDOA` | `Enabled` | `true` | Sonsuz BSODA aç/kapat |
-| `1_BSDOA` | `ForceAllSlots` | `true` | `true`: 3 slotun tamamı BSODA. `false`: sadece boş slotlar |
+| `1_BSDOA` | `Enabled` | `true` | Sonsuz Eşya aç/kapat (alınan eşyalar kalıcı, boş slotlar boş kalır) |
 | `2_Stamina` | `StartEnabled` | `false` | Oyun başında sonsuz stamina açık mı |
 | `4_Godmode` | `DurationSeconds` | `0` | Godmode süresi (saniye), **0 = süresiz** |
 | `6_Extra` | `SpeedMultiplier` / `SlowMoScale` / `ItemId` / `FieldOfView` / `AudioPitch` / `Notebooks` / `JumpMultiplier` / `FlySpeed` | `3` / `0.35` / `4` / `90` / `1` / `20` / `3` / `12` | Ek hile değerleri |

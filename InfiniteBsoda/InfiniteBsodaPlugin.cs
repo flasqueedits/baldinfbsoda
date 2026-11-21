@@ -14,7 +14,8 @@ namespace BaldiInfiniteBsoda
 	/// Baldi's Basics Classic - Cheat Pack (BepInEx 5 + Harmony).
 	///
 	/// Hileler:
-	///   1) Sonsuz BSODA     - envanter slotları kalıcı ID 4 (BSODA)
+	///   1) Sonsuz Eşya      - alınan her eşya kendi slotunda kalıcı (ID/slot farketmez;
+	///                        boş slotlara hiçbir şey eklenmez)
 	///   2) Sonsuz Stamina   - stamina hiç bitmez (koşu sonsuz)
 	///   3) Finale Mode      - tüm notebooklar toplanmış gibi finale mode'a geçiş
 	///   4) Godmode (süreli) - NPC'ler dokunamaz; üstte COMIC PRO geri sayım
@@ -26,10 +27,7 @@ namespace BaldiInfiniteBsoda
 	{
 		public const string PluginGuid = "com.mod.baldi.infinitebsoda";
 		public const string PluginName = "ULTIMATE BALDI CHEAT!";
-		public const string PluginVersion = "2.4.0";
-
-		private const int BsodaId = 4;
-		private const int EmptySlot = 0;
+		public const string PluginVersion = "2.5.0";
 
 		internal static ManualLogSource Log;
 		internal static BaldiInfiniteBsodaPlugin Instance;
@@ -39,7 +37,8 @@ namespace BaldiInfiniteBsoda
 		// Config
 		private ConfigEntry<bool> _bsodaEnabled;
 		private ConfigEntry<bool> _staminaEnabled;
-		private ConfigEntry<bool> _forceAllSlots;
+		// ESKİ: _forceAllSlots (tüm slotları BSODA yapardı) — kaldırıldı.
+		// YENİ: alınan her eşya kalıcıdır; boş slotlara hiçbir şey konmaz.
 		private ConfigEntry<float> _godmodeDuration;
 		private ConfigEntry<KeyCode> _keyBsoda;
 		private ConfigEntry<KeyCode> _keyStamina;
@@ -85,21 +84,17 @@ namespace BaldiInfiniteBsoda
 		// Durum
 		private bool _infiniteStamina;
 
-		// Oyun doku cache (BSODA ikonu)
-		private Texture _bsodaTex;
-		private bool _iconsResolved;
-
 		private void Awake()
 		{
 			Log = Logger;
 
-			_bsodaEnabled = Config.Bind("1_BSDOA", "Enabled", true, "Sonsuz BSODA aç/kapat");
-			_forceAllSlots = Config.Bind("1_BSDOA", "ForceAllSlots", true, "true: tüm slotlar BSODA. false: sadece boş slotlar");
+			_bsodaEnabled = Config.Bind("1_BSDOA", "Enabled", true,
+				"Sonsuz Eşya: alınan her eşya envanterde kalıcı olur (hangi slot/ID olursa olsun)");
 			_staminaEnabled = Config.Bind("2_Stamina", "StartEnabled", false, "Oyun başında sonsuz stamina açık mı");
 			_godmodeDuration = Config.Bind("4_Godmode", "DurationSeconds", 0f,
 				"Godmode süresi (saniye). 0 = SÜRESIZ (infinite, önerilen)");
 
-			_keyBsoda = Config.Bind("Keys", "Bsoda", KeyCode.F6, "Sonsuz BSODA tuşu");
+			_keyBsoda = Config.Bind("Keys", "Bsoda", KeyCode.F6, "Sonsuz Eşya tuşu (alınan eşyalar kalıcı)");
 			_keyStamina = Config.Bind("Keys", "Stamina", KeyCode.F7, "Sonsuz stamina tuşu");
 			_keyFinale = Config.Bind("Keys", "Finale", KeyCode.F8, "Finale mode tuşu");
 			_keyGodmode = Config.Bind("Keys", "Godmode", KeyCode.F9, "Godmode hotkey");
@@ -369,7 +364,7 @@ namespace BaldiInfiniteBsoda
 		public void ToggleBsoda()
 		{
 			_bsodaEnabled.Value = !_bsodaEnabled.Value;
-			SetMessage(L.C("Infinite BSODA: ", "Sonsuz BSODA: ") + L.OnOff(_bsodaEnabled.Value));
+			SetMessage(L.C("Infinite Items (picked up items stay): ", "Sonsuz Eşya (alınanlar kalıcı): ") + L.OnOff(_bsodaEnabled.Value));
 		}
 
 		public void ToggleStamina()
@@ -458,7 +453,14 @@ namespace BaldiInfiniteBsoda
 		public void SetAudioPitch(float v) { _audioPitch.Value = Mathf.Clamp(v, 0.25f, 2.5f); ExtraCheats.SetAudioPitch(_audioPitch.Value); }
 		public void SetNotebooks(int v) { _notebooks.Value = Mathf.Max(0, v); ExtraCheats.SetNotebooks(_notebooks.Value); }
 
-		// -------------------------------------------------------------- BSODA --
+		// ---------------------------------------------------------- Sonsuz Eşya --
+
+		/// <summary>
+		/// Son görülen envanter durumu (slot başına eşya ID'si). 0 = boş slot.
+		/// Oyun bir eşyayı kullandığında/cıkardığında slotu 0'a çeker; biz buradan geri yazarız.
+		/// Boş slotları ASLA doldurmayız — sadece kullanıcımn gerçekten aldığı eşyalar kalıcıdır.
+		/// </summary>
+		private int[] _itemSnapshot;
 
 		private void HandleBsoda()
 		{
@@ -467,50 +469,62 @@ namespace BaldiInfiniteBsoda
 			int[] items = GameAccess.GetItemArray();
 			if (items == null || items.Length == 0) return;
 
-			ResolveBsodaTexture();
+			// İlk çağrı veya slot sayısı değiştiyse (sahne değişimi) anlık görüntüyü al.
+			if (_itemSnapshot == null || _itemSnapshot.Length != items.Length)
+			{
+				_itemSnapshot = (int[])items.Clone();
+				return;
+			}
 
-			bool forceAll = _forceAllSlots.Value;
+			// 1) Yeni alınan eşyaları kaydet (snapshot boş, oyun dolu).
+			// 2) Oyunun boşalttığı slotları geri yükle (snapshot dolu, oyun boş).
+			//    NOT: Oyun eşyayı bilerek başka bir ID'ye çevirirse (ör. item swapping), o yeni
+			//    ID'yi de geçerli kabul edip snapshot'ı güncelliyoruz — zorla eski ID'ye döndürmüyoruz.
 			bool changed = false;
+			var restored = new System.Text.StringBuilder();
 			for (int i = 0; i < items.Length; i++)
 			{
-				if (items[i] != BsodaId)
+				if (items[i] == 0 && _itemSnapshot[i] != 0)
 				{
-					if (forceAll || items[i] == EmptySlot)
-					{
-						items[i] = BsodaId;
-						changed = true;
-					}
+					// Oyun eşyayı kullandı/çıkardı -> aynı slotta aynı eşyayı geri koy.
+					items[i] = _itemSnapshot[i];
+					changed = true;
+					restored.Append(i).Append(':').Append(_itemSnapshot[i]).Append(' ');
+				}
+				else if (items[i] != 0 && _itemSnapshot[i] != items[i])
+				{
+					// Yeni/degisen eşya -> kalıcı olarak kaydet.
+					_itemSnapshot[i] = items[i];
+					BaldiInfiniteBsodaPlugin.LogBoth(
+						L.C("Item saved to slot ", "Eşya kaydedildi (slot ") + i +
+						L.C(": id ", " -> id ") + items[i] + ")");
 				}
 			}
 
 			if (changed)
 			{
 				RefreshSlots();
-				// Oyun slotları düşürdü/boşalttı -> biz anında BSODA ile doldurduk. Logla.
-				var filled = new System.Text.StringBuilder();
-				for (int i = 0; i < items.Length; i++)
-					if (items[i] == BsodaId) filled.Append(i).Append(' ');
-				LogBoth(L.C("BSODA slots refilled: ", "BSODA slotları dolduruldu: ") + filled.ToString().TrimEnd());
+				LogBoth(L.C("Items restored: ", "Eşyalar geri yüklendi: ") + restored.ToString().TrimEnd());
 			}
 		}
 
-		private void ResolveBsodaTexture()
-		{
-			if (_iconsResolved && _bsodaTex != null) return;
-			var icons = GameAccess.GetIconArray();
-			if (icons == null || icons.Length <= BsodaId) return;
-			_bsodaTex = icons.GetValue(BsodaId) as Texture;
-			_iconsResolved = _bsodaTex != null;
-		}
-
+		/// <summary>
+		/// HUD slot ikonlarını envanterdeki GERÇEK eşya ID'lerine göre tazeler.
+		/// (Eskisi sabit BSODA ikonunu tüm slotlara koyardı — artık her slot kendi eşyasını gösterir.)
+		/// </summary>
 		private void RefreshSlots()
 		{
-			if (_bsodaTex == null) return;
+			if (_itemSnapshot == null) return;
+			var icons = GameAccess.GetIconArray();
 			var slots = GameAccess.GetSlotArray();
-			if (slots == null) return;
-			for (int i = 0; i < slots.Length; i++)
+			if (icons == null || slots == null) return;
+			int n = System.Math.Min(slots.Length, _itemSnapshot.Length);
+			for (int i = 0; i < n; i++)
 			{
-				GameAccess.SetSlotTexture(slots.GetValue(i), _bsodaTex);
+				int id = _itemSnapshot[i];
+				if (id < 0 || id >= icons.Length) continue; // boş slot veya bilinmeyen ID -> ikon değiştirme
+				object tex = icons.GetValue(id);
+				if (tex != null) GameAccess.SetSlotTexture(slots.GetValue(i), tex);
 			}
 		}
 
