@@ -29,12 +29,19 @@ function Resolve-GameDir([string]$dir) {
 
     foreach ($root in $roots) {
         if (-not (Test-Path $root)) { continue }
-        # 3 seviyeye kadar tara: *_Data klasoru olan ve BepInEx/core iceren oyun kokleri
-        $candidates = Get-ChildItem $root -Directory -Recurse -Depth 3 -ErrorAction SilentlyContinue |
+        # 3 seviyeye kadar tara: Unity data'si (*_Data) OLAN dizinler.
+        # Oncelik: BepInEx/core/BepInEx.dll bulunanlar (>= 2) -> gerçek mod hedefi.
+        # Yoksa -> diger Unity oyunlari (build yine calisir, DLL kurulumu atlanir).
+        $allGameDirs = @(Get-ChildItem $root -Directory -Recurse -Depth 3 -ErrorAction SilentlyContinue |
             Where-Object {
-                (Get-ChildItem $_.FullName -Directory -Filter "*_Data" -ErrorAction SilentlyContinue) -and
-                (Test-Path (Join-Path $_.FullName "BepInEx\core"))
-            } | Select-Object -First 5
+                Get-ChildItem $_.FullName -Directory -Filter "*_Data" -ErrorAction SilentlyContinue
+            })
+        $withBepInEx = @($allGameDirs | Where-Object {
+            (Test-Path (Join-Path $_.FullName "BepInEx\core\BepInEx.dll")) -or
+            (Test-Path (Join-Path $_.FullName "BepInEx\plugins"))
+        })
+        $preferred = if ($withBepInEx.Count -gt 0) { $withBepInEx } else { $allGameDirs }
+        $candidates = $preferred | Select-Object -First 5
 
         foreach ($c in $candidates) {
             Write-Host "Oyun klasoru otomatik bulundu: $($c.FullName)" -ForegroundColor Cyan
