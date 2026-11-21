@@ -9,6 +9,49 @@ param(
 $ErrorActionPreference = "Stop"
 $project = Join-Path $PSScriptRoot "InfiniteBsoda\InfiniteBsoda.csproj"
 
+# --- Oyun klasorunu coz ---
+# 1) Parametre verilmisse onu kullan (mutlak yol veya goreli).
+# 2) Verilmemisse / klasor yoksa: indirilen oyun kopyalarini tara ve *_Data icereni bul.
+#    Boylece eski bir zip'ten gelen yanlis varsayilan yol derlemeyi bozmaz.
+function Resolve-GameDir([string]$dir) {
+    if (-not [string]::IsNullOrWhiteSpace($dir)) {
+        $full = [System.IO.Path]::GetFullPath($dir)
+        if (Test-Path $full) { return $full }
+        Write-Warning "GameDir bulunamadi: $full"
+    }
+
+    $roots = @(
+        "C:\Users\Windows\Downloads",
+        "C:\Users\Windows\Desktop",
+        (Join-Path $env:USERPROFILE "Downloads"),
+        (Join-Path $env:USERPROFILE "Desktop")
+) | Select-Object -Unique
+
+    foreach ($root in $roots) {
+        if (-not (Test-Path $root)) { continue }
+        # 3 seviyeye kadar tara: *_Data klasoru olan ve BepInEx/core iceren oyun kokleri
+        $candidates = Get-ChildItem $root -Directory -Recurse -Depth 3 -ErrorAction SilentlyContinue |
+            Where-Object {
+                (Get-ChildItem $_.FullName -Directory -Filter "*_Data" -ErrorAction SilentlyContinue) -and
+                (Test-Path (Join-Path $_.FullName "BepInEx\core"))
+            } | Select-Object -First 5
+
+        foreach ($c in $candidates) {
+            Write-Host "Oyun klasoru otomatik bulundu: $($c.FullName)" -ForegroundColor Cyan
+            return $c.FullName
+        }
+    }
+    return $null
+}
+
+$resolved = Resolve-GameDir $GameDir
+if (-not $resolved) {
+    Write-Error "Oyun klasoru bulunamadi. Lutfen -GameDir ile dogru yolu verin."
+    exit 1
+}
+$GameDir = $resolved
+
+Write-Host "Derleniyor (BaldiDir=$GameDir)" -ForegroundColor Cyan
 dotnet build $project -c $Configuration "-p:BaldiDir=$GameDir"
 if ($LASTEXITCODE -ne 0) { Write-Error "Derleme basarisiz oldu."; exit 1 }
 
