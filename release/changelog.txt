@@ -1,0 +1,42 @@
+ULTIMATE BALDI CHEAT! v2.4.0
+=============================
+
+22 hile + AssetStudio tarzi varlik ripper + oyun ici konsol + EN/TR dil.
+
+YENI (2.4.0):
+- Yuksek Atlama / Dusuk Yer Cekimi (V) - Physics.gravity, 1-8x ayarlanabilir
+- Ucma Modu (B) - Space yukari, Ctrl asagi
+- Tum Dusmanlari Gizle (X)
+- Notebook Otomatik Topla (M)
+- Sucluluk / sure sifirlama (R)
+- Kapilari / cikislari ac (P)
+- Cikisa isinlanma (K)
+- Debug Modu (F4) ve Sonsuz Mod (Y)
+- Acilis splash'i KALDIRILDI (yazi gosterilmiyor)
+- build.ps1: Unity data'si olan oyunu otomatik bulur
+
+ONCEKI (2.3.0):
+- Hiz Hilesi (F5), Yavas Cekim (F11), Tum Esyalar (F12)
+- NPC Dondurma (T), Jumpscare Yok (J), Noclip (N)
+- Isinlanma (G), Wallhack/ESP (H), Sakin Baldi (C)
+- Ayar slider'lari (hiz, FOV, ses, notebook...)
+
+ONCEKI (2.2.0):
+- Sonsuz godmode (HUD: GODMODE infinity)
+- Spoop mode -> Finale akisi + adim adim loglama
+- Tum olaylarin loglanmasi (BepInEx + oyun ici konsol)
+- Varlik kategorileri (Audio/Texture/Text/Animation/Model/Script/Other)
+- EN/TR localization, uyari bandi, GUI depth duzeltmesi
+
+ONCEKI (2.1.0):
+- 4 temel hile: Sonsuz BSODA (F6), Sonsuz Stamina (F7),
+  Finale Mode (F8), Godmode (F9)
+- AssetStudio tarzi varlik ripper (PNG/OGG/TXT/RAW export)
+- Better Among Us tarzi konsol overlay (F10)
+- Made with Unity sonrasi splash (2.4.0'da kaldirildi)
+
+KURULUM:
+BepInEx 5 (win x64) kurulu bir Baldi's Basics Classic klonuna
+BepInEx/plugins/InfiniteBsoda.dll dosyasini kopyalayin.
+
+TUSLAR: Delete=menu, F10=konsol, F5-F12/T/J/N/G/H/C/V/B/X/M/R/P/K/F4/Y=hileler.
