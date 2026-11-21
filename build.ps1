@@ -2,7 +2,7 @@
 # Kullanim:  .\build.ps1  [-GameDir "D:\Games\BaldiBasics"]  [-Configuration Release]
 
 param(
-    [string]$GameDir = "C:\Users\Windows\Downloads\tamam_ulan_asker_collection_14e4c_-VyvA5S (1)\Tamam Ulan Asker Collection\TAMAM ULAN ASKER",
+    [string]$GameDir = "C:\Users\Windows\Downloads\tamam_ulan_asker_collection_a2b50\Tamam Ulan Asker Collection\64 Bit",
     [string]$Configuration = "Release"
 )
 
