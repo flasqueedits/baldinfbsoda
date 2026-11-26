@@ -429,6 +429,14 @@ namespace BaldiInfiniteBsoda
 			CheatRow(L.C("Debug Mode", "Debug Modu"), "F4", ExtraCheats.DebugModeActive, plugin.ToggleDebugMode);
 			CheatRow(L.C("Endless Mode", "Sonsuz Mod"), "Y", ExtraCheats.EndlessModeActive, plugin.ToggleEndlessMode);
 
+			// SLOP'a özel (2.6.0)
+			GUILayout.Space(4);
+			GUILayout.Label(L.C("=== SLOP SPECIAL ===", "=== SLOP'A ÖZEL ==="), _titleStyle);
+			CheatRow(L.C("Infinite Whistle", "Sonsuz Islık"), "U", ExtraCheats.InfiniteWhistleActive, ExtraCheats.ToggleInfiniteWhistle);
+			CheatRow(L.C("Infinite Dash", "Sonsuz Atılma"), "I", ExtraCheats.InfiniteDashActive, ExtraCheats.ToggleInfiniteDash);
+			CheatRow(L.C("Speed Cap Override", "Hız Sınırı Kaldır"), "O", ExtraCheats.SpeedCapActive, ExtraCheats.ToggleSpeedCap,
+				ExtraCheats.SpeedCapActive ? ExtraCheats.SlopSpeedCap.ToString("0") : null);
+
 			GUILayout.BeginHorizontal();
 			GUILayout.Label(L.C("Reset guilt / timer (R):", "Suçluluk / süre sıfırla (R):"), _rowStyle, GUILayout.Width(180));
 			GUILayout.Label("[R]", _rowStyle, GUILayout.Width(46));
@@ -476,6 +484,8 @@ namespace BaldiInfiniteBsoda
 				v => plugin.SetJumpMultiplier(v), "x" + ExtraCheats.JumpMultiplier.ToString("0.0"));
 			SliderRow(L.C("Fly Speed", "Uçma Hızı"), ExtraCheats.FlySpeed, 1f, 40f,
 				v => plugin.SetFlySpeed(v), ExtraCheats.FlySpeed.ToString("0"));
+			SliderRow(L.C("SLOP Speed Cap", "SLOP Hız Sınırı"), ExtraCheats.SlopSpeedCap, 1f, 60f,
+				v => ExtraCheats.SetSlopSpeedCap(v), ExtraCheats.SlopSpeedCap.ToString("0"));
 
 			GUILayout.Space(8);
 			GUILayout.Label(L.C("Last action:", "Son işlem:"), _titleStyle);

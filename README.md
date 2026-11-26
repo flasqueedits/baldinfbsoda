@@ -1,6 +1,6 @@
 # Baldi Infinite BSODA — Cheat Pack (BepInEx Mod)
 
-Baldi's Basics Classic kod tabanına sahip oyunlar için **22 hilelik paket**
+Baldi's Basics Classic kod tabanına sahip oyunlar için **25 hilelik paket**
 (BepInEx 5 + HarmonyX) + oyun içi konsol overlay + AssetStudio tarzı varlık
 ripper'ı. **Sürüm-bağımsız**: oyun sınıfları ve alanları runtime'da reflection
 ile bulunur; Assembly-CSharp'a compile-time bağımlılık yoktur.
@@ -40,6 +40,9 @@ ile bulunur; Assembly-CSharp'a compile-time bağımlılık yoktur.
 | **K** | Çıkışa Işınlan | `entrance_0..3` konumuna ışınlanır |
 | **F4** | Debug Modu | Oyunun `debugMode` alanını açar |
 | **Y** | Sonsuz Mod | Baldi'nin `endless` alanını açar |
+| **U** | Sonsuz Islık (SLOP) | `WhistleCooldown`=0, sürekli ıslık çalabilirsin |
+| **I** | Sonsuz Atılma (SLOP) | `DashCooldown`=0, sürekli dash atabilirsin |
+| **O** | Hız Sınırı Kaldır (SLOP) | `MaxWalkSpeed`/`MaxRunSpeed` sınırlarını yükseltir |
 
 **Diğer kontroller:** `Delete` menü, `F10` konsol overlay, menüdeki **Ayarlar**
 slider'ları ile hız/yavaşlık/eşya ID/FOV/ses perdesi/notebook/atlama/uçma hızı

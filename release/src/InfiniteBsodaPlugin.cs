@@ -27,7 +27,7 @@ namespace BaldiInfiniteBsoda
 	{
 		public const string PluginGuid = "com.mod.baldi.infinitebsoda";
 		public const string PluginName = "ULTIMATE BALDI CHEAT!";
-		public const string PluginVersion = "2.5.0";
+		public const string PluginVersion = "2.6.0";
 
 		internal static ManualLogSource Log;
 		internal static BaldiInfiniteBsodaPlugin Instance;
@@ -78,6 +78,9 @@ namespace BaldiInfiniteBsoda
 		private ConfigEntry<KeyCode> _keyExit;
 		private ConfigEntry<KeyCode> _keyDebug;
 		private ConfigEntry<KeyCode> _keyEndless;
+		private ConfigEntry<KeyCode> _keyWhistle;
+		private ConfigEntry<KeyCode> _keyDash;
+		private ConfigEntry<KeyCode> _keySpeedCap;
 		private ConfigEntry<float> _jumpMultiplier;
 		private ConfigEntry<float> _flySpeed;
 
@@ -122,6 +125,11 @@ namespace BaldiInfiniteBsoda
 			_keyExit = Config.Bind("Keys", "ExitTeleport", KeyCode.K, "Teleport to exit hotkey");
 			_keyDebug = Config.Bind("Keys", "DebugMode", KeyCode.F4, "Debug mode hotkey");
 			_keyEndless = Config.Bind("Keys", "EndlessMode", KeyCode.Y, "Endless mode hotkey");
+
+			// SLOP'a özel (2.6.0)
+			_keyWhistle = Config.Bind("Keys", "InfiniteWhistle", KeyCode.U, "Infinite whistle (SLOP) hotkey");
+			_keyDash = Config.Bind("Keys", "InfiniteDash", KeyCode.I, "Infinite dash (SLOP) hotkey");
+			_keySpeedCap = Config.Bind("Keys", "SpeedCap", KeyCode.O, "Speed cap override (SLOP) hotkey");
 
 			_jumpMultiplier = Config.Bind("6_Extra", "JumpMultiplier", 3f, "Jump/gravity multiplier (1-8)");
 			_flySpeed = Config.Bind("6_Extra", "FlySpeed", 12f, "Fly movement speed");
@@ -294,6 +302,8 @@ namespace BaldiInfiniteBsoda
 			ExtraCheats.ApplyFov();
 			ExtraCheats.ApplyFly();
 			ExtraCheats.ApplyAutoNotebooks();
+			ExtraCheats.ApplySlopAbilities();
+			ExtraCheats.ApplySlopSpeedCap();
 		}
 
 		private void OnGUI()
@@ -335,6 +345,9 @@ namespace BaldiInfiniteBsoda
 			if (KeyDown(_keyExit.Value)) ExtraCheats.TeleportToExit();
 			if (KeyDown(_keyDebug.Value)) ToggleDebugMode();
 			if (KeyDown(_keyEndless.Value)) ToggleEndlessMode();
+			if (KeyDown(_keyWhistle.Value)) ExtraCheats.ToggleInfiniteWhistle();
+			if (KeyDown(_keyDash.Value)) ExtraCheats.ToggleInfiniteDash();
+			if (KeyDown(_keySpeedCap.Value)) ExtraCheats.ToggleSpeedCap();
 		}
 
 		// Splash tamamen kaldırıldı (kullanıcı isteği): açılışta yazı gösterilmez.

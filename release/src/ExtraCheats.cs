@@ -655,6 +655,75 @@ namespace BaldiInfiniteBsoda
 			BaldiInfiniteBsodaPlugin.LogBoth(L.C("Endless mode: ", "Sonsuz mod: ") + L.OnOff(EndlessModeActive));
 		}
 
+		// ======================================================================
+		// SLOP'A ÖZEL HİLELER (2.6.0) — Whistle / Dash / Speed caps
+		// SLOP (Mono build) PlayerScript alanları:
+		//   WhistleKey, DashKey, IsWhistling, WhistleCooldown,
+		//   Dashing, DashCooldown, MaxWalkSpeed, MaxRunSpeed, DashSlider
+		// ======================================================================
+
+		public static bool InfiniteWhistleActive { get; private set; }
+		public static bool InfiniteDashActive { get; private set; }
+		public static float SlopSpeedCap = 20f;
+		public static bool SpeedCapActive { get; private set; }
+
+		public static void ToggleInfiniteWhistle()
+		{
+			InfiniteWhistleActive = !InfiniteWhistleActive;
+			BaldiInfiniteBsodaPlugin.LogBoth(L.C("Infinite whistle (SLOP): ", "Sonsuz ıslık (SLOP): ") + L.OnOff(InfiniteWhistleActive));
+		}
+
+		public static void ToggleInfiniteDash()
+		{
+			InfiniteDashActive = !InfiniteDashActive;
+			BaldiInfiniteBsodaPlugin.LogBoth(L.C("Infinite dash (SLOP): ", "Sonsuz atılma (SLOP): ") + L.OnOff(InfiniteDashActive));
+		}
+
+		public static void ToggleSpeedCap()
+		{
+			SpeedCapActive = !SpeedCapActive;
+			BaldiInfiniteBsodaPlugin.LogBoth(L.C("Speed cap override (SLOP): ", "Hız sınırı geçersiz kıl (SLOP): ") +
+				L.OnOff(SpeedCapActive) + (SpeedCapActive ? " " + SlopSpeedCap.ToString("0") : ""));
+		}
+
+		public static void SetSlopSpeedCap(float v)
+		{
+			SlopSpeedCap = Mathf.Clamp(v, 1f, 60f);
+			if (SpeedCapActive) ApplySlopSpeedCap();
+		}
+
+		/// <summary>Her kare: ıslık/dash cooldown'larını sıfırla, bayrakları kapat (tekrar tekrar kullanılabilsin).</summary>
+		public static void ApplySlopAbilities()
+		{
+			if (!GameAccess.HasPlayer) return;
+			var p = GameAccess.Player;
+			var t = p.GetType();
+			if (InfiniteWhistleActive)
+			{
+				SetFloatField(p, "WhistleCooldown", 0f);
+				SetBoolField(p, "IsWhistling", false); // her kare reset -> sürekli tetiklenebilir
+				SetBoolField(p, "CanWhistle", true);
+			}
+			if (InfiniteDashActive)
+			{
+				SetFloatField(p, "DashCooldown", 0f);
+				SetBoolField(p, "Dashing", false);
+				// Dash slider'ı tam doldur
+				FieldInfo sliderField = AccessTools.Field(t, "DashSlider");
+				var slider = sliderField?.GetValue(p) as UnityEngine.UI.Slider;
+				if (slider != null) slider.value = slider.maxValue;
+			}
+		}
+
+		/// <summary>SLOP'un MaxWalkSpeed/MaxRunSpeed sınırlarını yükselt.</summary>
+		public static void ApplySlopSpeedCap()
+		{
+			if (!SpeedCapActive || !GameAccess.HasPlayer) return;
+			var p = GameAccess.Player;
+			SetFloatField(p, "MaxWalkSpeed", SlopSpeedCap);
+			SetFloatField(p, "MaxRunSpeed", SlopSpeedCap * 1.5f);
+		}
+
 		/// <summary>Sahne değiştiğinde cache'leri temizle (yeni NPC/Player örnekleri için).</summary>
 		public static void OnSceneChanged()
 		{
@@ -685,6 +754,9 @@ namespace BaldiInfiniteBsoda
 			if (AutoNotebooksActive) ToggleAutoNotebooks();
 			if (DebugModeActive) ToggleDebugMode();
 			if (EndlessModeActive) ToggleEndlessMode();
+			if (InfiniteWhistleActive) ToggleInfiniteWhistle();
+			if (InfiniteDashActive) ToggleInfiniteDash();
+			if (SpeedCapActive) ToggleSpeedCap();
 			if (!float.IsNaN(_origGravityY)) Physics.gravity = new Vector3(0f, _origGravityY, 0f);
 			Time.timeScale = 1f;
 		}

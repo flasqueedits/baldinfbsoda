@@ -1,5 +1,14 @@
-ULTIMATE BALDI CHEAT! v2.5.0
+ULTIMATE BALDI CHEAT! v2.6.0
 =============================
+
+YENI (2.6.0) - SLOP'a ozel:
+- Sonsuz Islik (U): WhistleCooldown sifirlanir, IsWhistling/CanWhistle sifirlanir
+- Sonsuz Atılma (I): DashCooldown sifirlanir, DashSlider doldurulur
+- Hiz Siniri Kaldir (O): MaxWalkSpeed/MaxRunSpeed yukseltilir (slider 1-60)
+- SLOP Mono build'i uretildi (AssetRipper + Unity 2022.3.62 Mono2x)
+- csproj varsayilan BaldiDir duzeltildi (BepInEx referans hatasi)
+
+ONCEKI (2.5.0):
 
 YENI (2.5.0):
 - "Sonsuz BSODA" -> "SONSUZ ESYA" olarak degistirildi.

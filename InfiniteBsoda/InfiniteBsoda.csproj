@@ -9,7 +9,7 @@
       Oyun klasorunuzu buraya yazin veya derlerken verin:
         dotnet build -p:BaldiDir="D:\Games\BaldiBasics"
     -->
-    <BaldiDir Condition="'$(BaldiDir)' == ''">C:\Users\Windows\Downloads\tamam_ulan_asker_collection_a2b50\Tamam Ulan Asker Collection\64 Bit</BaldiDir>
+    <BaldiDir Condition="'$(BaldiDir)' == ''">C:\Users\Windows\Downloads\tamam_ulan_asker_collection_14e4c_-VyvA5S (1)\Tamam Ulan Asker Collection\TAMAM ULAN ASKER</BaldiDir>
 
     <!-- *_Data klasoru otomatik bulunur. Elle vermek isterseniz: -p:DataDir="..." -->
     <DataDir Condition="'$(DataDir)' == ''">$([System.IO.Directory]::GetDirectories('$(BaldiDir)', '*_Data')[0])</DataDir>
